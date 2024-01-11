@@ -54,7 +54,7 @@ void interruptHandler() {
    * Give semaphore in the interrupt handler
    * https://www.freertos.org/a00124.html
    */
-  
+  // release semaphore
   xSemaphoreGiveFromISR(interruptSemaphore, NULL);
 }
 
@@ -77,6 +77,8 @@ void TaskLed(void *pvParameters)
     if (xSemaphoreTake(interruptSemaphore, portMAX_DELAY) == pdPASS) {
       digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     }
+
+    // xSemaphoreGive is intended omitted, because this function is supposed to solely take care of the LED blinking
     vTaskDelay(10);
   }
 }
