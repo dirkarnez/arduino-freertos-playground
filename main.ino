@@ -45,6 +45,10 @@ void setup() {
 void loop() {}
 
 
+/**
+this is a dummy function, just to fitting `attachInterrupt` signature
+in javascript this function should be a lambda
+*/
 void interruptHandler() {
   /**
    * Give semaphore in the interrupt handler
