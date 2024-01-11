@@ -12,6 +12,7 @@ https://github.com/feilipu/Arduino_FreeRTOS_Library/tree/master/examples
   - then use a simple switch case to do logic
 - [ ] interrupt attach
 - [ ] semaphores
+  - `xSemaphoreCreateBinary`
 
 ### Snipppets
 - Task operation
