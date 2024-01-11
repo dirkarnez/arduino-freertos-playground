@@ -8,6 +8,8 @@ https://github.com/feilipu/Arduino_FreeRTOS_Library/tree/master/examples
     - `xQueueSend`
   - Notification
 - [ ] fsm
+  - use `xQueueCreate` to create a queue of length only 1 to store state
+  - then use a simple switch case to do logic
 - [ ] interrupt attach
 - [ ] semaphores
 
