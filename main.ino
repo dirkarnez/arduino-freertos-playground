@@ -1,30 +1,81 @@
-#include <Arduino_FreeRTOS.h> 
+/*
+   Example of a FreeRTOS mutex
+   https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html
+*/
 
-void TaskPrint1(void *param); //声明打印任务1
-void TaskPrint2(void *param); //声明打印任务2 
+// Include Arduino FreeRTOS library
+#include <Arduino_FreeRTOS.h>
 
-void setup() { 
-  Serial.begin(9600); 
-  while (!Serial);//等待串口连接后执行 
-  xTaskCreate(TaskPrint1, "Print1" , 128, NULL, 1, NULL); //创建任务1 
-  xTaskCreate(TaskPrint2, "Print2" , 128, NULL, 2, NULL); //创建任务2 
 
-  vTaskStartScheduler(); //启动任务调度
-} 
+// Include mutex support
+#include <semphr.h>
 
-void TaskPrint1(void *param){ 
-  while (1) { 
-    Serial.println("TaskPrint1..." ); 
-    vTaskDelay(1000 / portTICK_PERIOD_MS ); // 等待1秒 
+/*
+   Declaring a global variable of type SemaphoreHandle_t
+
+*/
+SemaphoreHandle_t mutex;
+
+int globalCount = 0;
+
+void setup() {
+
+  Serial.begin(9600);
+
+  /**
+       Create a mutex.
+       https://www.freertos.org/CreateMutex.html
+  */
+  mutex = xSemaphoreCreateMutex();
+  if (mutex != NULL) {
+    Serial.println("Mutex created");
   }
-} 
 
-void TaskPrint2(void *param){ 
-  while (1) { 
-    Serial.println("TaskPrint2..." ); 
-    vTaskDelay(2000 / portTICK_PERIOD_MS ); // 等待2秒 
+  /**
+     Create tasks
+  */
+  xTaskCreate(TaskMutex, // Task function
+              "Task1", // Task name for humans
+              128, 
+              5000, // Task parameter
+              1, // Task priority
+              NULL);
+
+  xTaskCreate(TaskMutex, "Task2", 128, 5000, 1, NULL);
+
+}
+
+void loop() {}
+
+void TaskMutex(void *pvParameters)
+{
+  TickType_t delayTime = *((TickType_t*)pvParameters); // Use task parameters to define delay
+
+  for (;;)
+  {
+    /**
+       Take mutex
+       https://www.freertos.org/a00122.html
+    */
+    if (xSemaphoreTake(mutex, 10) == pdTRUE)
+    {
+      Serial.print(pcTaskGetName(NULL)); // Get task name
+      Serial.print(", Count read value: ");
+      Serial.print(globalCount);
+
+      globalCount++;
+
+      Serial.print(", Updated value: ");
+      Serial.print(globalCount);
+
+      Serial.println();
+      /**
+         Give mutex
+         https://www.freertos.org/a00123.html
+      */
+      xSemaphoreGive(mutex);
+    }
+
+    vTaskDelay(delayTime / portTICK_PERIOD_MS);
   }
-} 
-
-void loop() {
 }
