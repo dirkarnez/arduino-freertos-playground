@@ -4,6 +4,8 @@ https://github.com/feilipu/Arduino_FreeRTOS_Library/tree/master/examples
 - [ ] Task operation
 - [ ] inter-task communication
   - `QueueHandle_t`
+    - `xQueueReceive`
+    - `xQueueSend`
   - Notification
 - [ ] fsm
 - [ ] interrupt attach
@@ -37,3 +39,34 @@ https://github.com/feilipu/Arduino_FreeRTOS_Library/tree/master/examples
        }
     }
     ```
+  - Queue (https://github.com/feilipu/Arduino_FreeRTOS_Library/blob/master/examples/StructQueue/StructQueue.ino)
+    - ```cpp
+      // Include queue support
+      #include <queue.h>
+      
+      // Define a struct
+      struct pinRead {
+        int pin;
+        int value;
+      };
+      
+      /* 
+       * Declaring a global variable of type QueueHandle_t 
+       * 
+       */
+      QueueHandle_t structQueue;
+      
+      void setup() {
+      
+        /**
+         * Create a queue.
+         * https://www.freertos.org/a00116.html
+         */
+        structQueue = xQueueCreate(10, // Queue length
+                                    sizeof(struct pinRead) // Queue item size
+                                    );
+        if (structQueue != NULL) {
+          // TODO
+        }
+      }
+      ```
